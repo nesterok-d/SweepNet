@@ -1,9 +1,11 @@
 package req;
 
 import net.minidev.json.JSONObject;
+
+import req.Base;
 import res.ValidatableResponse;
 
-public class Auth extends Base{
+public class Auth extends Base {
     public static String cookies = "";
 
 
@@ -18,7 +20,7 @@ public class Auth extends Base{
     //Пост запрос для регистрации
     public ValidatableResponse postAuthRegister(JSONObject registerData){
         ValidatableResponse response = PostNoParams("/auth/register", registerData.toString());
-        cookies = response.getCookies();
+        //cookies = response.getCookies();
         return response;
     }
 

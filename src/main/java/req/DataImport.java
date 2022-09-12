@@ -1,9 +1,8 @@
 package req;
 
-import net.minidev.json.JSONObject;
 import res.ValidatableResponse;
 
-public class DataImport extends Base{
+public class DataImport extends Base {
 
 
     //Пост запрос для импорта данных

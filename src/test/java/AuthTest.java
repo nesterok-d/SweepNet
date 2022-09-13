@@ -1,15 +1,14 @@
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.testng.annotations.Test;
 import req.Auth;
 
-public class AuthTest{
+public class AuthTest extends BaseTest{
     @Test //не валидные данные
     public void postAuthLoginInvalid(){
         Auth res = new Auth();
-        JSONObject authData = new JSONObject();
-        authData.put("email", "123456");
-        authData.put("password", "123456");
-        res.postAuthLogin(authData)
+
+        res.postAuthLogin(authDataInvalid())
                 .checkStatusCode(200)
                 .checkJsonValue("isError", true)
                 .checkJsonValue("statusCode", 401)
@@ -19,16 +18,15 @@ public class AuthTest{
     @Test //валидные данные
     public void postAuthLoginValidAndLogoutTest(){
         Auth res = new Auth();
-        JSONObject authData = new JSONObject();
-        authData.put("email", "test@pltco.ru");
-        authData.put("password", "1234567890");
-        res.postAuthLogin(authData)
+
+        res.postAuthLogin(authDataAdmin())
                 .checkStatusCode(200)
                 .checkJsonValue("isError", false)
                 .checkJsonValue("statusCode", 200)
                 .checkJsonValue("message", "")
                 .checkJsonNotNullValue("data.id")
                 .checkJsonValue("data.email", "test@pltco.ru");
+
         res.postAuthLogout()
                 .checkStatusCode(200)
                 .checkJsonValue("isError", false)
@@ -38,76 +36,71 @@ public class AuthTest{
     @Test //регистрация
     public void getAuthRegisterTest(){
         Auth res = new Auth();
-        JSONObject authDataLog = new JSONObject();
-        authDataLog.put("email", "test@pltco.ru");
-        authDataLog.put("password", "1234567890");
-        JSONObject authDataReg = new JSONObject();
-        authDataReg.put("email", "testReg@pltco.ru");
-        authDataReg.put("password", "1234567890");
-        res.postAuthLogin(authDataLog);
-        res.postAuthRegister(authDataReg)
+
+        res.postAuthLogin(authDataAdmin());
+        res.postAuthRegister(authDataUser1())
                 .checkStatusCode(200)
                 .checkJsonValue("isError", true)
                 .checkJsonValue("statusCode", 201);
-        res.postAuthLogout();
-        res.postAuthLogin(authDataLog);
-        res.postAuthRegister(authDataReg)
+        res.postAuthRegister(authDataUser1())
                 .checkStatusCode(200)
                 .checkJsonValue("isError", true)
                 .checkJsonValue("statusCode", 401)
                 .checkJsonValue("message", "Username 'testReg@pltco.ru' is already taken.")
                 .checkJsonNullValue("data.id");
         res.postAuthLogout();
-        res.postAuthLogin(authDataReg);
-        String id = res.postAuthLogin(authDataReg).getJsonValue("data.id");
+
+        String id = res.postAuthLogin(authDataUser1()).getJsonValue("data.id");
         res.postAuthLogout();
-        res.postAuthLogin(authDataLog);
-        JSONObject authDataDel = new JSONObject();
-        authDataLog.put("userIdList", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
-        authDataLog.put("password", "1234567890");
 
-
-        res.postAuthUsersDelete(authDataDel)
+        res.postAuthLogin(authDataAdmin());
+        res.postAuthUsersDelete(deleteList(id))
                 .checkStatusCode(200)
                 .checkJsonValue("isError", false)
                 .checkJsonValue("statusCode", 200)
-                .checkJsonValue("message", "")
-                .checkJsonNullValue("data.id");
+                .checkJsonValue("message", "");
+        res.postAuthLogout();
 
+        res.postAuthLogin(authDataUser1())
+                .checkStatusCode(200)
+                .checkJsonValue("isError", true)
+                .checkJsonValue("message", "Неверное имя пользователя или пароль");
     }
 
 
     @Test
     public void getAuthUserIdTest(){
         Auth res = new Auth();
-        JSONObject authData = new JSONObject();
-        authData.put("email", "test@pltco.ru");
-        authData.put("password", "1234567890");
-        res.postAuthLogin(authData);
-        res.getAuthUserId("f04ce32c-70d9-4a14-a6cf-f7739aef186d")
-                .checkJsonValue("data.id", "f04ce32c-70d9-4a14-a6cf-f7739aef186d");
+        String id = res.postAuthLogin(authDataAdmin()).getJsonValue("data.id");
+        res.getAuthUserId(id)
+                .checkJsonValue("data.id", id);
     }
 
     @Test
     public void getAuthRolesTest(){
         Auth res = new Auth();
-        JSONObject authData = new JSONObject();
-        authData.put("email", "test@pltco.ru");
-        authData.put("password", "1234567890");
-        res.postAuthLogin(authData);
+
+        res.postAuthLogin(authDataAdmin());
+        res.postAuthRegister(authDataUser1());
+
+        String id = res.postAuthLogin(authDataUser1()).getJsonValue("data.id");
+        res.postAuthLogout();
+
+        res.postAuthLogin(authDataAdmin());
+        res.postAuthUsersIdUpdate(id, authDataUpdate(id)).checkStatusCode(200);
+        res.postAuthLogout();
+
+        res.postAuthLogin(authDataUser1()).checkStatusCode(200);
         res.getAuthRoles()
-                .checkStatusCode(200);
+                .checkStatusCode(200)
+                .checkJsonValue("data.roles", "[admin, user]");
+        res.postAuthLogout();
+
+        res.postAuthLogin(authDataAdmin());
+        res.postAuthUsersDelete(deleteList(id))
+                .checkStatusCode(200)
+                .checkJsonValue("statusCode", 200);
+        res.postAuthLogout();
+
     }
-
-
-
-//    @Test
-//    public void postAuthRegisterTest(){
-//        Auth res = new Auth();
-//        JSONObject authData = new JSONObject();
-//        authData.put("email", "123456");
-//        authData.put("password", "123456");
-//        res.postAuthRegister(authData)
-//                .checkStatusCode(200);
-//    }
 }

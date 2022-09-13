@@ -2,6 +2,7 @@ package req;
 
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import net.minidev.json.JSONObject;
 import res.ValidatableResponse;
 
 import java.io.File;
@@ -109,7 +110,13 @@ public class Base {
     }
 
     //создание пост запросов без параметров, если тело пустое, отправляем пустую строку
-    public ValidatableResponse PostNoParams(String path, Object body) {
+    public ValidatableResponse PostNoParams(String path, JSONObject body) {
+        Response response = (Response) RequestSpecNoParams().body(body).when().
+                post(path);
+        response.then().log().all();
+        return new ValidatableResponse(response);
+    }
+    public ValidatableResponse PostNoParams(String path, String body) {
         Response response = (Response) RequestSpecNoParams().body(body).when().
                 post(path);
         response.then().log().all();

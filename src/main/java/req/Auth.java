@@ -46,15 +46,15 @@ public class Auth extends Base {
     }
 
     //Пост запрос для получения списка пользователей
-    public ValidatableResponse postAuthUsersIdUpdate(String id, Object body){
-        return PostNoParams("auth/users/"+id+"/update", body);
+    public ValidatableResponse postAuthUsersIdUpdate(String id, JSONObject body){
+        return PostNoParams("/api/v1/auth/user/"+id+"/update", body);
     }
 
-    public ValidatableResponse postAuthUsersDelete(Object body){
-        return PostNoParams("auth/users/delete", body);
+    public ValidatableResponse postAuthUsersDelete(JSONObject body){
+        return PostNoParams("auth/user/delete", body);
     }
 
-    public ValidatableResponse postAuthUsersLockout(Object body){
+    public ValidatableResponse postAuthUsersLockout(JSONObject body){
         return PostNoParams("auth/users/lockout", body);
     }
 

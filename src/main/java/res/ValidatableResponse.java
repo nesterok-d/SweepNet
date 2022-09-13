@@ -32,7 +32,7 @@ public class ValidatableResponse {
 
     //метод сравнения json по строчно
     public ValidatableResponse checkJsonValue(String stringPath, String value) {
-        Assert.assertEquals(response.jsonPath().get(stringPath),value, "Значение элемента "+stringPath+" не совпадает с " + value);
+        Assert.assertEquals(response.jsonPath().get(stringPath).toString(),value, "Значение элемента "+stringPath+" не совпадает с " + value);
         return this;
     }
     //метод получения json по строчно

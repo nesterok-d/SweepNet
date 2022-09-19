@@ -3,7 +3,7 @@ import req.Auth;
 
 public class AuthTest extends BaseTest{
     @Test //авторизация не валидными данными
-    public void postAuthLoginInvalid(){
+    public void loginInvalidTest(){
         Auth res = new Auth();
 
         res.postAuthLogin(authDataInvalid())
@@ -14,7 +14,7 @@ public class AuthTest extends BaseTest{
                 .checkJsonNullValue("data.id");
     }
     @Test //авторизация валидными данными и завершение сессии
-    public void postAuthLoginValidAndLogoutTest(){
+    public void loginValidAndLogoutTest(){
         Auth res = new Auth();
 
         res.postAuthLogin(authDataAdmin())
@@ -32,7 +32,7 @@ public class AuthTest extends BaseTest{
                 .checkJsonValue("message", "");
     }
     @Test //регистрация
-    public void getAuthRegisterTest(){
+    public void registerAndDeleteUserTest(){
         Auth res = new Auth();
 
         res.postAuthLogin(authDataAdmin());
@@ -67,7 +67,7 @@ public class AuthTest extends BaseTest{
 
 
     @Test
-    public void getAuthUserIdTest(){
+    public void getUserIdTest(){
         Auth res = new Auth();
         String id = res.postAuthLogin(authDataAdmin()).getJsonValue("data.id");
         res.getAuthUserId(id)
@@ -75,7 +75,7 @@ public class AuthTest extends BaseTest{
     }
 
     @Test
-    public void getAuthRolesTest(){
+    public void getRolesTest(){
         Auth res = new Auth();
 
         res.postAuthLogin(authDataAdmin());

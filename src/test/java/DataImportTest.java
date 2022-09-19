@@ -2,7 +2,7 @@ import net.minidev.json.JSONObject;
 import org.testng.annotations.Test;
 import req.DataImport;
 
-public class DataImportTest {
+public class DataImportTest extends BaseTest {
 
     @Test
     public void postDataImportZupTest(){
@@ -12,7 +12,6 @@ public class DataImportTest {
     }
     @Test
     public void postAuthDataImportMainPhotoAddTest(){
-
 
         DataImport res = new DataImport();
         res.postAuthDataImportMainPhotoAdd()

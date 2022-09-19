@@ -6,6 +6,7 @@ import net.minidev.json.JSONObject;
 import res.ValidatableResponse;
 
 import java.io.File;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
@@ -85,10 +86,9 @@ public class Base {
                 body(body);
     }
 
-//    private RequestSpecification RequestSpecInt(String path, String paramName, Integer value, Object body) {
-//        return RequestSpecInt(path, paramName, value).
-//                body(body);
-//    }
+    private RequestSpecification RequestSpecInt(String path, String paramName, Integer value) {
+        return RequestSpecInt(path, paramName, value);
+    }
 
     private RequestSpecification RequestSpecStr(String path, String paramName, String value, Object body) {
         return RequestSpecStr(path, paramName, value).
@@ -123,8 +123,8 @@ public class Base {
         return new ValidatableResponse(response);
     }
     //создание пост запросов с параметрами, если тело пустое, отправляем пустую строку String path, String paramName1, Integer value1, String paramName2, Integer value2
-    public ValidatableResponse PostIntInt(String path, String paramName1, Integer value1, String paramName2, Integer value2, Object body) {
-        Response response = (Response) RequestSpecIntInt(paramName1, value1, paramName2, value2).body(body).when().
+    public ValidatableResponse PostIntFile(String path, String paramName1, Integer value1, String file) {
+        Response response = (Response) RequestSpecInt(path,paramName1, value1).multiPart("files", new File(file), "multipart/form-data").when().
                 post(path);
         response.then().log().all();
         return new ValidatableResponse(response);
@@ -142,7 +142,14 @@ public class Base {
         return new ValidatableResponse(response);
     }
 
-
+//    public ValidatableResponse PostFile(String path, String files[]) {
+//        Response response = (Response) RequestSpecStrInt(paramName1, value1, paramName2, value2)
+//                .multiPart("files", new File(files), "multipart/form-data")
+//                .when()
+//                .post(path);
+//        response.then().log().all();
+//        return new ValidatableResponse(response);
+//    }
 
 
 

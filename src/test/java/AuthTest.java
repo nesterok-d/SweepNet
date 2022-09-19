@@ -2,18 +2,18 @@ import org.testng.annotations.Test;
 import req.Auth;
 
 public class AuthTest extends BaseTest{
-    @Test //не валидные данные
+    @Test //авторизация не валидными данными
     public void postAuthLoginInvalid(){
         Auth res = new Auth();
 
         res.postAuthLogin(authDataInvalid())
                 .checkStatusCode(200)
-                .checkJsonValue("isError", true)
-                .checkJsonValue("statusCode", 401)
+                .checkJsonValue("isError", "true")
+                .checkJsonValue("statusCode", "401")
                 .checkJsonValue("message", "Неверное имя пользователя или пароль")
                 .checkJsonNullValue("data.id");
     }
-    @Test //валидные данные
+    @Test //авторизация валидными данными и завершение сессии
     public void postAuthLoginValidAndLogoutTest(){
         Auth res = new Auth();
 
